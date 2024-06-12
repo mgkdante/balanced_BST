@@ -96,25 +96,52 @@ class Tree {
     return callbackFn ? undefined : result
   }
 
-  levelOrderRec = (
-    node = this.root,
-    queue = [this.root],
-    solution = [],
-    callbackFn = null
-  ) => {
-    if (!node || queue.length === 0) return solution
-
-    let current = queue.shift()
-    if (callbackFn) {
-      callbackFn(current)
-    } else {
-      solution.push(current.data)
+  inOrder = (callbackFn, node = this.root, solution = []) => {
+    if (!node) {
+      return
     }
+    if (callbackFn) {
+      this.inOrder(callbackFn, node.left)
+      callbackFn(node)
+      this.inOrder(callbackFn, node.right)
+    } else {
+      this.inOrder(null, node.left, solution)
+      solution.push(node.data)
+      this.inOrder(null, node.right, solution)
+    }
+    return callbackFn ? undefined : solution
+  }
 
-    if (current.left) queue.push(current.left)
-    if (current.right) queue.push(current.right)
+  preOrder = (callbackFn, node = this.root, solution = []) => {
+    if (!node) {
+      return
+    }
+    if (callbackFn) {
+      callbackFn(node)
+      this.preOrder(callbackFn, node.left)
+      this.preOrder(callbackFn, node.right)
+    } else {
+      solution.push(node.data)
+      this.preOrder(null, node.left, solution)
+      this.preOrder(null, node.right, solution)
+    }
+    return callbackFn ? undefined : solution
+  }
 
-    return this.levelOrderRec(node, queue, solution, callbackFn)
+  postOrder = (callbackFn, node = this.root, solution = []) => {
+    if (!node) {
+      return
+    }
+    if (callbackFn) {
+      this.postOrder(callbackFn, node.left)
+      this.postOrder(callbackFn, node.right)
+      callbackFn(node)
+    } else {
+      this.postOrder(null, node.left, solution)
+      this.postOrder(null, node.right, solution)
+      solution.push(node.data)
+    }
+    return callbackFn ? undefined : solution
   }
 
   isBalanced = (root = this.root) => {
@@ -127,6 +154,10 @@ class Tree {
       return [balanced, 1 + Math.max(leftHeight, rightHeight)]
     }
     return checkBalance(root)[0]
+  }
+
+  rebalance = () => {
+    this.root = this.buildTree(this.inOrder())
   }
 
   height = (node) => {

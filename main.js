@@ -6,5 +6,4 @@ const longArray = [
 ]
 const tree = new Tree(longArray)
 tree.prettyPrint()
-tree.levelOrderRec(console.log)
-console.log(tree.preOrder())
+console.log(tree.postOrder())
